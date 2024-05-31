@@ -1,0 +1,9 @@
+Leonardo Acquaroli is a brilliant Data Scientist with a solid academic background and relevant experience in analytics and entrepreneurship. He is currently studying Data Science for Economics at the University of Milan, where he has achieved a GPA of 29.8 and founded the student group UnimAI. Previously, he completed his degree in Economics and Commerce at the Marche Polytechnic University with top honors (110L), also serving as the vice president of the Starting Finance Club Polimarche. His experimental thesis explored the impact of financial education through his startup B come Bill.
+
+Leonardo works as an intern at Soccerment, one of the most advanced football analytics companies in Europe, where he has contributed to the creation of new features for AIDA, a chatbot powered by LLM and RAG. His master's thesis focuses on automating football data collection using Computer Vision techniques.
+
+In the field of technical and business competitions, Leonardo has participated in several hackathons and contests, achieving excellent results: he ranked seventh out of thirty participants in Hack the Gene, sixth out of twelve in Stats Under the Stars, and won the Sky Data Hackathon. He has also received numerous awards in business competitions, including the best pitch award at Clab 2019, victory at iDays Milan 2022, finalist at iDays Europe, and first prize at "An Idea for the Future" and "Big Data for Gender Equality."
+
+Leonardo has a strong passion for football data analysis and possesses advanced skills in Statistics & Machine Learning, Computer Vision, and Reinforcement Learning. He is proficient in Python, R, SQL, and Excel, and has excellent public speaking abilities.
+
+He can be contacted via LinkedIn (Leonardo Acquaroli) or GitHub (@LeonardoAcquaroli), and resides in Milan.
