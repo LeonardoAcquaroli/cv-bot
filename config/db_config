@@ -1,0 +1,19 @@
+from pymongo.mongo_client import MongoClient
+import os
+
+# Imposta le credenziali come variabili d'ambiente
+username = os.getenv('MONGO_CLUSTER_USER')
+password = os.getenv('MONGO_CLUSTER_PASS')
+cluster_url = 'la19.fjkkeei.mongodb.net'
+
+uri = f"mongodb+srv://{username}:{password}@{cluster_url}/?retryWrites=true&w=majority&appName=LA19"
+
+# Crea un nuovo client e connettiti al server
+mongo_client = MongoClient(uri)
+
+# Invia un ping per confermare una connessione riuscita
+try:
+    mongo_client.admin.command('ping')
+    print("Successfully connected to MongoDB!")
+except Exception as e:
+    print(e)
