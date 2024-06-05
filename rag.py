@@ -2,20 +2,17 @@
 from langchain.prompts import HumanMessagePromptTemplate, ChatPromptTemplate
 from langchain_core.messages import SystemMessage
 from langchain_openai import ChatOpenAI
-# Embeddings
-from langchain_openai import OpenAIEmbeddings
+from langchain.memory import ConversationBufferMemory
+from langchain_core.runnables import RunnableLambda
+from prompts import ChatPrompts #system_prompt, user_prompt
+
 # Vector DB
 from pymongo.mongo_client import MongoClient
+
 # Environment
 import os
 from dotenv import load_dotenv
 load_dotenv()
-
-# divide into two classes one for vector search and query and the other for mongodb connection to collection
-
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-MODEL = "gpt-3.5-turbo"
-embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
 
 class MongoDB:
     def __init__(self, cluster_url='la19.fjkkeei.mongodb.net') -> None:
@@ -27,7 +24,7 @@ class MongoDB:
         self.uri = f"mongodb+srv://{self.username}:{self.password}@{self.cluster_url}/?retryWrites=true&w=majority&appName={self.app_name}"
     
     def get_client(self):
-        # Create a new clientand connect to server
+        # Create a new client and connect to server
         mongo_client = MongoClient(self.uri)
 
         # Ping to check connection
@@ -36,7 +33,7 @@ class MongoDB:
             print("Pinged your deployment. You successfully connected to MongoDB!")
             return mongo_client
         except Exception as e:
-            print('There was an issue onnecting to MongoDB.\n')
+            print('There was an issue connecting to MongoDB.\n')
             print(e)
         
     def get_db(self, db_name='cv-bot'):
@@ -49,7 +46,7 @@ class MongoDB:
         collection = db[collection_name]
         return collection
 
-def vector_search(user_query, collection):
+def vector_search(user_query, collection, embeddings):
     """
     Perform a vector search in the MongoDB collection based on the user query.
 
@@ -75,7 +72,7 @@ def vector_search(user_query, collection):
                 "queryVector": query_embeddings,
                 "path": "embeddings",
                 "numCandidates": 100,  # Number of candidate matches to consider
-                "limit": 2  # Return top 5 matches
+                "limit": 2  # Return top 2 matches
             }
         },
         {
@@ -95,26 +92,22 @@ def vector_search(user_query, collection):
     results = collection.aggregate(pipeline)
     return list(results)
 
-def handle_user_query(query):
+def handle_user_query(query, embeddings, llm):
     # Get connection to MongoDB only in the moment of a prompt from the webapp
-    collection = MongoDB.get_collection() # It gets instantiated every time a message comes...FIX
+    collection = MongoDB().get_collection() # Fix instantiation issue
 
-    get_knowledge = vector_search(query, collection)
+    knowledge = vector_search(query, collection, embeddings)
 
     search_result = ''
-    for result in get_knowledge:
+    for result in knowledge:
         search_result += f'''Document title: {result.get('doc_title', 'N/A')},
-                             Document text: {result.get('text', 'N/A')}\n'''
-
-    # Initialize the ChatOpenAI instance with your model and API key
-    llm = ChatOpenAI(model=MODEL, temperature=0.0001, api_key=OPENAI_API_KEY)
+                             Document text: {result.get('text', 'N/A')}'''
 
     # Prepare the system prompt
-    system_prompt = '''You are a hiring assistant built by Leonardo Acquaroli and you have to give recruiters information about Leonardo that can convince them to hire him without showing too much that you are biased towards him.
-        Provide detailed answers mostly based on the passed context.'''
+    system_prompt = ChatPrompts().system_prompt
 
     # Prepare the user prompt with the query and search results
-    user_prompt = f'''Answer this user query: "{query}", with the following context: "{search_result}"'''
+    user_prompt = ChatPrompts().user_prompt.format(query=query, search_result=search_result)    
 
     # Create the ChatPromptTemplate
     prompt_template = ChatPromptTemplate.from_messages(
@@ -123,11 +116,14 @@ def handle_user_query(query):
             HumanMessagePromptTemplate.from_template(user_prompt)
         ]
     )
-    
-    # Prepare the input for the invoke method
-    formatted_input = prompt_template.format(input={"query": query, "context": search_result})
 
-    # Invoke the LLM with the formatted input
-    response = llm.invoke(input=formatted_input)
+    # Prepare the input for the chain
+    chain = prompt_template | llm | RunnableLambda(lambda x: f'{x.content}')
+
+    # Invoke the chain with the formatted input
+    response = chain.invoke(input={
+                'query': query, 
+                'context': search_result
+                })
     
-    return response.content, search_result
+    return response, search_result
