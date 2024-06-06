@@ -43,7 +43,7 @@ if "messages" not in st.session_state:
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
-    with st.chat_message(message["role"], avatar = avatar_image_url if message["role"] == "assistant" else None):
+    with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
 @st.cache_resource
@@ -52,7 +52,7 @@ def display_chat_message(role, content):
     Display chat message in the chat message container and add it to chat history through session state.
     '''
     # Display user message in chat message container
-    with st.chat_message(role):
+    with st.chat_message(role, avatar = avatar_image_url if role == "assistant" else None):
         st.markdown(content)
     # Add user message to chat history
     st.session_state.messages.append({"role": role, "content": content})
