@@ -61,6 +61,9 @@ doc_folder = os.path.join(current_dir, 'docs')
 # Initialize the ChatOpenAI instance with your model and API key
 llm = ChatOpenAI(model=MODEL, temperature=0.000001, api_key=OPENAI_API_KEY)
 
+# Chat section
+st.markdown("### Try the chat!🤖")
+
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
