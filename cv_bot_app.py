@@ -61,7 +61,7 @@ def display_chat_message(role, content):
 chat_history = [f'''{message_dict['role']}: {message_dict['content']}''' for message_dict in st.session_state.messages]
 
 # React to user input
-if prompt := st.chat_input(placeholder='Ask about Leonardo'):
+if prompt := st.chat_input(placeholder='''For example: "What are Leonardo's soft skills?"'''):
 
     display_chat_message("user", prompt)
 
