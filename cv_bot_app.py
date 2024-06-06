@@ -17,7 +17,7 @@ load_dotenv()
 
 st.title("Chat with Leo👋🏻")
 
-@st.cache_resource
+@st.cache
 def images_carousel():
     return leo_carousel
 
