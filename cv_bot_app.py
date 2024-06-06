@@ -11,10 +11,13 @@ from langchain_openai import ChatOpenAI
 # from langchain.chains.question_answering import load_qa_chain
 # Streamlit
 import streamlit as st
+from carousel import leo_carousel
 
 load_dotenv()
 
 st.title("Chat with Leo👋🏻")
+
+leo_carousel
 
 LANGCHAIN_TRACING_V2 = os.getenv("LANGCHAIN_TRACING_V2")
 LANGCHAIN_API_KEY = os.getenv("LANGCHAIN_API_KEY")
