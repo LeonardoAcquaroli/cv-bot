@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 # text
 from langchain_openai import OpenAIEmbeddings
 # chat
-from rag import handle_user_query
+from rag import handle_user_query, MongoDB
 from langchain_openai import ChatOpenAI
 # from langchain.memory import ConversationBufferMemory
 # from langchain.prompts import PromptTemplate
@@ -23,6 +23,9 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 MODEL = "gpt-3.5-turbo"
 
 avatar_image_url = 'https://raw.githubusercontent.com/LeonardoAcquaroli/cv-bot/main/avatar.webp'
+
+pymongo = MongoDB()
+collection = pymongo.get_collection('my_documents')
 
 #Openai Embeddings
 embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
@@ -54,6 +57,9 @@ def display_chat_message(role, content):
     # Add user message to chat history
     st.session_state.messages.append({"role": role, "content": content})
 
+# Create chat_history variable as a string of the dictionary of messages if there are any messages, otherwise None
+chat_history = [f'''{message_dict['role']}: {message_dict['content']}''' for message_dict in st.session_state.messages]
+
 # React to user input
 if prompt := st.chat_input(placeholder='Ask about Leonardo'):
 
@@ -61,7 +67,9 @@ if prompt := st.chat_input(placeholder='Ask about Leonardo'):
 
     # Chatbot response
     response, search_result = handle_user_query(query=prompt,
+                                            collection=collection,
                                             embeddings=embeddings,
-                                            llm=llm)
+                                            llm=llm,
+                                            chat_history=chat_history)
     
     display_chat_message("assistant", response)

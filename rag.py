@@ -92,9 +92,7 @@ def vector_search(user_query, collection, embeddings):
     results = collection.aggregate(pipeline)
     return list(results)
 
-def handle_user_query(query, embeddings, llm):
-    # Get connection to MongoDB only in the moment of a prompt from the webapp
-    collection = MongoDB().get_collection() # Fix instantiation issue
+def handle_user_query(query, collection, embeddings, llm, chat_history):
 
     knowledge = vector_search(query, collection, embeddings)
 
@@ -107,7 +105,7 @@ def handle_user_query(query, embeddings, llm):
     system_prompt = ChatPrompts().system_prompt
 
     # Prepare the user prompt with the query and search results
-    user_prompt = ChatPrompts().user_prompt.format(query=query, search_result=search_result)    
+    user_prompt = ChatPrompts().user_prompt.format(query=query, search_result=search_result, chat_history=chat_history)    
 
     # Create the ChatPromptTemplate
     prompt_template = ChatPromptTemplate.from_messages(
