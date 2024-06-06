@@ -11,17 +11,34 @@ from langchain_openai import ChatOpenAI
 # from langchain.chains.question_answering import load_qa_chain
 # Streamlit
 import streamlit as st
-from carousel import leo_carousel
+from streamlit_carousel import carousel
 
 load_dotenv()
 
+carousel_items = [
+    dict(
+        title="iDays win 2022",
+        text="The Quokkay team wins the iDays 2022 Hackathon",
+        img="https://raw.githubusercontent.com/LeonardoAcquaroli/cv-bot/main/images/quokkay.jpeg",
+        # link="https://discuss.streamlit.io/t/new-component-react-bootstrap-carousel/46819"
+    ),
+    dict(
+        title="Big data for Gender equality",
+        text="Me and Melissa, presenting our project in Auditorium Cascina Triulza at MIND in Milan",
+        img="https://raw.githubusercontent.com/LeonardoAcquaroli/cv-bot/main/images/mind.jpeg",
+        # link="https://github.com/thomasbs17/streamlit-contributions/tree/master"
+    ),
+    dict(
+        title="Playing football",
+        text="This is me during a summer tournament in 2022",
+        img="https://raw.githubusercontent.com/LeonardoAcquaroli/cv-bot/main/images/football.jpg"
+    ),
+]
+
+
 st.title("Chat with Leo👋🏻")
 
-@st.cache
-def images_carousel():
-    return leo_carousel
-
-images_carousel()
+carousel(items=carousel_items, width=1)
 
 LANGCHAIN_TRACING_V2 = os.getenv("LANGCHAIN_TRACING_V2")
 LANGCHAIN_API_KEY = os.getenv("LANGCHAIN_API_KEY")
