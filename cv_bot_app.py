@@ -17,7 +17,8 @@ load_dotenv()
 
 st.title("Chat with Leo👋🏻")
 
-leo_carousel
+@st.cache_resource
+carousel = leo_carousel
 
 LANGCHAIN_TRACING_V2 = os.getenv("LANGCHAIN_TRACING_V2")
 LANGCHAIN_API_KEY = os.getenv("LANGCHAIN_API_KEY")
