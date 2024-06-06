@@ -73,3 +73,5 @@ if prompt := st.chat_input(placeholder='''For example: "What are Leonardo's soft
                                             chat_history=chat_history)
     
     display_chat_message("assistant", response)
+
+    st.button("Clear chat history", on_click=lambda: st.session_state.pop("messages", None))
