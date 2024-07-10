@@ -18,10 +18,6 @@ st.title("Chat with Leo👋🏻")
 
 LANGCHAIN_TRACING_V2 = os.getenv("LANGCHAIN_TRACING_V2")
 LANGCHAIN_API_KEY = os.getenv("LANGCHAIN_API_KEY")
-LANGCHAIN_PROJECT = os.getenv("LANGCHAIN_PROJECT")
-st.write(LANGCHAIN_TRACING_V2)
-st.write(LANGCHAIN_API_KEY)
-st.write(LANGCHAIN_PROJECT)
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 MODEL = "gpt-3.5-turbo"
