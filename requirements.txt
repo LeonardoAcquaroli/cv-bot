@@ -4,4 +4,6 @@ pymongo>=4.7.2
 langchain-openai>=0.1.7
 langchain==0.2.1
 langchain-community>=0.2.1
+langchain-cohere>=0.1.0
+cohere>=5.2.7
 streamlit

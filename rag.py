@@ -1,18 +1,27 @@
-# Chat
-from langchain.prompts import HumanMessagePromptTemplate, ChatPromptTemplate
-from langchain_core.messages import SystemMessage
-from langchain_openai import ChatOpenAI
-from langchain.memory import ConversationBufferMemory
-from langchain_core.runnables import RunnableLambda
-from prompts import ChatPrompts #system_prompt, user_prompt
+"""RAG utilities powered by Cohere embeddings + OpenAI GPT-5 Nano."""
 
-# Vector DB
+from prompts import ChatPrompts  # system_prompt, user_prompt
 from pymongo.mongo_client import MongoClient
-
-# Environment
+from openai import OpenAI
+import cohere
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+COHERE_API_KEY = os.getenv("COHERE_API_KEY")
+MODEL = os.getenv("OPENAI_CHAT_MODEL", "gpt-5-nano-2025-08-07")
+EMBEDDING_MODEL = os.getenv("COHERE_EMBED_MODEL", "embed-v4.0")
+
+if not OPENAI_API_KEY:
+    raise EnvironmentError("OPENAI_API_KEY is not set.")
+
+if not COHERE_API_KEY:
+    raise EnvironmentError("COHERE_API_KEY is not set.")
+
+openai_client = OpenAI(api_key=OPENAI_API_KEY)
+cohere_client = cohere.ClientV2(api_key=COHERE_API_KEY)
 
 class MongoDB:
     def __init__(self, cluster_url='la19.fjkkeei.mongodb.net') -> None:
@@ -46,7 +55,26 @@ class MongoDB:
         collection = db[collection_name]
         return collection
 
-def vector_search(user_query, collection, embeddings):
+def _extract_embedding_vector(embed_response) -> list:
+    """Return the default float embedding vector from Cohere's embed response."""
+    embeddings = getattr(embed_response, "embeddings", None)
+    if embeddings is None:
+        raise ValueError("Embed response missing embeddings")
+    if hasattr(embeddings, "float_"):
+        return embeddings.float_[0]
+    return embeddings[0]
+
+
+def embed_query_text(text: str) -> list:
+    response = cohere_client.embed(
+        texts=[text],
+        model=EMBEDDING_MODEL,
+        input_type="search_query",
+    )
+    return _extract_embedding_vector(response)
+
+
+def vector_search(user_query, collection):
     """
     Perform a vector search in the MongoDB collection based on the user query.
 
@@ -58,11 +86,10 @@ def vector_search(user_query, collection, embeddings):
     list: A list of matching documents.
     """
 
-    # Generate embedding for the user query
-    query_embeddings = embeddings.embed_query(user_query)
+    query_embeddings = embed_query_text(user_query)
 
     if query_embeddings is None:
-        return "Invalid query or embedding generation failed."
+        return []
 
     # Define the vector search pipeline
     pipeline = [
@@ -72,7 +99,7 @@ def vector_search(user_query, collection, embeddings):
                 "queryVector": query_embeddings,
                 "path": "embeddings",
                 "numCandidates": 20,  # Number of candidate matches to consider
-                "limit": 2  # Return top 5 matches
+                "limit": 3  # Return top 3 matches
             }
         },
         {
@@ -92,36 +119,32 @@ def vector_search(user_query, collection, embeddings):
     results = collection.aggregate(pipeline)
     return list(results)
 
-def handle_user_query(query, collection, embeddings, llm, chat_history):
 
-    knowledge = vector_search(query, collection, embeddings)
+def handle_user_query(query, collection, chat_history=None):
+    knowledge = vector_search(query, collection)
 
     search_result = ''
     for result in knowledge:
-        search_result += f'''Document title: {result.get('doc_title', 'N/A')},
-                             Document text: {result.get('text', 'N/A')}'''
+        search_result += (
+            f"Document title: {result.get('doc_title', 'N/A')}, "
+            f"Document text: {result.get('text', 'N/A')}"
+        )
 
-    # Prepare the system prompt
-    system_prompt = ChatPrompts().system_prompt
-
-    # Prepare the user prompt with the query and search results
-    user_prompt = ChatPrompts().user_prompt.format(query=query, search_result=search_result, chat_history=chat_history)    
-
-    # Create the ChatPromptTemplate
-    prompt_template = ChatPromptTemplate.from_messages(
-        [
-            SystemMessage(content=system_prompt),
-            HumanMessagePromptTemplate.from_template(user_prompt)
-        ]
+    prompts = ChatPrompts()
+    history_text = "\n".join(chat_history or [])
+    user_prompt = prompts.user_prompt.format(
+        query=query,
+        search_result=search_result,
+        chat_history=history_text,
     )
 
-    # Prepare the input for the chain
-    chain = prompt_template | llm | RunnableLambda(lambda x: f'{x.content}')
+    response = openai_client.chat.completions.create(
+        model=MODEL,
+        temperature=1,
+        messages=[
+            {"role": "system", "content": prompts.system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+    )
 
-    # Invoke the chain with the formatted input
-    response = chain.invoke(input={
-                'query': query, 
-                'context': search_result
-                })
-    
-    return response, search_result
+    return response.choices[0].message.content, search_result
