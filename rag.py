@@ -44,12 +44,12 @@ openai_client = OpenAI(api_key=OPENAI_API_KEY)
 cohere_client = cohere.ClientV2(api_key=COHERE_API_KEY)
 
 class MongoDB:
-    def __init__(self, cluster_url='la19.fjkkeei.mongodb.net', db_name=None) -> None:
+    def __init__(self) -> None:
         self.username = os.getenv('MONGO_CLUSTER_USER')
         self.password = os.getenv('MONGO_CLUSTER_PASS')
         self.app_name = os.getenv('APP_NAME')
-        self.cluster_url = cluster_url
-        self.db_name = db_name or os.getenv('MONGO_DB_NAME', 'cv-bot')
+        self.cluster_url = os.getenv('MONGO_CLUSTER_URL')
+        self.db_name = os.getenv('MONGO_DB_NAME', 'cv-bot')
         self.uri = f"mongodb+srv://{self.username}:{self.password}@{self.cluster_url}/?retryWrites=true&w=majority&appName={self.app_name}"
     
     def get_client(self):
@@ -132,6 +132,7 @@ def vector_search(user_query, collection):
                 "_id": 0,  # Exclude the _id field
                 "doc_title": 1,
                 "text": 1,
+                "embeddings": 1,
                 "score": {
                     "$meta": "vectorSearchScore"  # Include the search score
                 }
@@ -157,7 +158,6 @@ def vector_search(user_query, collection):
         logger.warning("Vector search returned no matches for query: %s", user_query)
 
     return results
-
 
 def handle_user_query(query, collection, chat_history=None):
     logger.info("Handling user query '%s' (chat history len=%d)", query, len(chat_history or []))
