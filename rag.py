@@ -120,7 +120,7 @@ def vector_search(user_query, collection):
     pipeline = [
         {
             "$vectorSearch": {
-                "index": "textual_docs_vector_index",
+                "index": "_id_",
                 "queryVector": query_embeddings,
                 "path": "embeddings",
                 "numCandidates": 20,  # Number of candidate matches to consider
