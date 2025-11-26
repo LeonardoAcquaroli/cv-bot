@@ -49,7 +49,7 @@ class MongoDB:
         self.password = os.getenv('MONGO_CLUSTER_PASS')
         self.app_name = os.getenv('APP_NAME')
         self.cluster_url = cluster_url
-        self.db_name = db_name or os.getenv('MONGO_DB_NAME', 'my_database')
+        self.db_name = db_name or os.getenv('MONGO_DB_NAME', 'cv-bot')
         self.uri = f"mongodb+srv://{self.username}:{self.password}@{self.cluster_url}/?retryWrites=true&w=majority&appName={self.app_name}"
     
     def get_client(self):
@@ -120,7 +120,7 @@ def vector_search(user_query, collection):
     pipeline = [
         {
             "$vectorSearch": {
-                "index": "_id_",
+                "index": "textual_docs_vector_index",
                 "queryVector": query_embeddings,
                 "path": "embeddings",
                 "numCandidates": 20,  # Number of candidate matches to consider
