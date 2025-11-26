@@ -44,19 +44,16 @@ openai_client = OpenAI(api_key=OPENAI_API_KEY)
 cohere_client = cohere.ClientV2(api_key=COHERE_API_KEY)
 
 class MongoDB:
-    def __init__(self, cluster_url='la19.fjkkeei.mongodb.net') -> None:
-        # Credentials from environment variables 
+    def __init__(self, cluster_url='la19.fjkkeei.mongodb.net', db_name=None) -> None:
         self.username = os.getenv('MONGO_CLUSTER_USER')
         self.password = os.getenv('MONGO_CLUSTER_PASS')
         self.app_name = os.getenv('APP_NAME')
         self.cluster_url = cluster_url
+        self.db_name = db_name or os.getenv('MONGO_DB_NAME', 'my_database')
         self.uri = f"mongodb+srv://{self.username}:{self.password}@{self.cluster_url}/?retryWrites=true&w=majority&appName={self.app_name}"
     
     def get_client(self):
-        # Create a new client and connect to server
         mongo_client = MongoClient(self.uri)
-
-        # Ping to check connection
         try:
             mongo_client.admin.command('ping')
             print("Pinged your deployment. You successfully connected to MongoDB!")
@@ -65,15 +62,13 @@ class MongoDB:
             print('There was an issue connecting to MongoDB.\n')
             print(e)
         
-    def get_db(self, db_name='cv-bot'):
+    def get_db(self):
         mongo_client = self.get_client()
-        db = mongo_client[db_name]
-        return db
+        return mongo_client[self.db_name]
     
     def get_collection(self, collection_name='my_documents'):
         db = self.get_db()
-        collection = db[collection_name]
-        return collection
+        return db[collection_name]
 
 def _extract_embedding_vector(embed_response) -> list:
     """Return the default float embedding vector from Cohere's embed response."""
