@@ -124,7 +124,7 @@ def vector_search(user_query, collection):
                 "queryVector": query_embeddings,
                 "path": "embeddings",
                 "numCandidates": 20,  # Number of candidate matches to consider
-                "limit": 3  # Return top 3 matches
+                "limit": 5  # Return top 5 matches
             }
         },
         {

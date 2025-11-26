@@ -67,7 +67,7 @@ if prompt := st.chat_input(placeholder='''For example: "What are Leonardo's soft
     app_logger.info("Retrieved context chars: %d", len(context or ""))
     display_chat_message("assistant", response)
 
-    with st.expander("Retrieved context", expanded=False):
-        st.write(context or "No context retrieved for this query.")
+    # with st.expander("Retrieved context", expanded=False):
+    #     st.write(context or "No context retrieved for this query.")
 
 st.button("Clear chat history", on_click=lambda: st.session_state.pop("messages", None))
