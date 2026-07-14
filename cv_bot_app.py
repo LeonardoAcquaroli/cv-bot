@@ -181,11 +181,13 @@ if prompt := st.chat_input(placeholder='''For example: "What are Leonardo's soft
     display_chat_message("user", prompt)
 
     chat_history = build_chat_history()
-    response, context = handle_user_query(
-        query=prompt,
-        client=qdrant_client,
-        chat_history=chat_history,
-    )
+
+    with st.spinner("Good question, you may also want to make a good offer!"):
+        response, context = handle_user_query(
+            query=prompt,
+            client=qdrant_client,
+            chat_history=chat_history,
+        )
 
     app_logger.info("Retrieved context chars: %d", len(context or ""))
     display_chat_message("assistant", response)
