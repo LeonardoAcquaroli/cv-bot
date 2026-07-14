@@ -6,3 +6,6 @@
 *.pyc
 /personal_docs
 /personal_mongodb_notebook.ipynb
+/docs
+/.vscode
+.DS_Store
