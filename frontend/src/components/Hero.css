@@ -1,0 +1,31 @@
+.hero {
+  text-align: center;
+  padding: 1.6rem 0 0.4rem;
+}
+
+.hero__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2rem, 6vw, 2.8rem);
+  line-height: 1.1;
+  margin: 0 0 0.35rem;
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero__subtitle {
+  margin: 0 auto;
+  max-width: 34ch;
+  color: var(--text-2);
+  font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+  font-weight: 500;
+}
+
+.hero__divider {
+  height: 1px;
+  margin: 1.3rem auto 0;
+  max-width: var(--content-max);
+  background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.6), transparent);
+}

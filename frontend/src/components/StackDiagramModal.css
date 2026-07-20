@@ -1,0 +1,182 @@
+.sdm__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 1.2rem;
+  background: rgba(3, 5, 12, 0.62);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.sdm__panel {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  max-height: 90dvh;
+  /* Clip to the rounded corners so the inner scrollbar can't poke out. */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--r-lg);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(160deg, rgba(31, 42, 77, 0.72), rgba(15, 20, 36, 0.82));
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.sdm__body {
+  overflow-y: auto;
+  padding: 1.8rem 1.6rem 2rem;
+}
+
+.sdm__close {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-2);
+  font-size: 0.85rem;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.sdm__close:hover {
+  background: var(--glass-bg-strong);
+  color: var(--text-1);
+}
+
+.sdm__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin: 0 0 0.3rem;
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sdm__subtitle {
+  margin: 0 0 1.5rem;
+  color: var(--text-2);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.sdm__flow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sdm__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.sdm__node {
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--r-md);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  text-align: center;
+}
+
+.sdm__node--service {
+  max-width: 220px;
+}
+
+.sdm__node-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.sdm__node-label {
+  font-weight: 600;
+  font-size: 0.98rem;
+}
+
+.sdm__node-sub {
+  font-size: 0.78rem;
+  color: var(--text-2);
+}
+
+/* Vertical connector with a travelling dot */
+.sdm__connector {
+  position: relative;
+  width: 2px;
+  height: 30px;
+  margin: 4px 0;
+  background: linear-gradient(180deg, rgba(167, 139, 250, 0.15), rgba(167, 139, 250, 0.55));
+  border-radius: 2px;
+  overflow: visible;
+}
+
+.sdm__connector-dot {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 50%;
+  background: var(--c-purple);
+  box-shadow: 0 0 8px rgba(167, 139, 250, 0.9);
+  animation: sdm-travel 1.8s ease-in-out infinite;
+}
+
+@keyframes sdm-travel {
+  0% {
+    top: -2px;
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    top: 28px;
+    opacity: 0;
+  }
+}
+
+/* Branch to the two backend services */
+.sdm__branch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.sdm__branch-line {
+  width: 60%;
+  max-width: 220px;
+  height: 1px;
+  margin-bottom: 0.9rem;
+  background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.5), transparent);
+}
+
+.sdm__services {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  width: 100%;
+}

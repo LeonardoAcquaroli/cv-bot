@@ -8,7 +8,7 @@ from openai import OpenAI
 from qdrant_client import QdrantClient
 from qdrant_client.models import Document
 
-from prompts import USER_PROMPT, SYSTEM_PROMPT
+from backend.prompts import USER_PROMPT, SYSTEM_PROMPT
 
 load_dotenv()
 
@@ -105,7 +105,9 @@ def vector_search(user_query, client=None, collection_name=COLLECTION_NAME, limi
 
     return results
 
-def handle_user_query(query, client=None, chat_history=None):
+def _build_context_and_messages(query, client=None, chat_history=None):
+    """Run retrieval and assemble the (messages, search_result) pair shared by
+    the blocking and streaming query handlers."""
     logger.info("Handling user query '%s' (chat history len=%d)", query, len(chat_history or []))
     knowledge = vector_search(query, client)
 
@@ -133,13 +135,44 @@ def handle_user_query(query, client=None, chat_history=None):
         chat_history=history_text,
     )
 
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "user", "content": user_prompt},
+    ]
+    return messages, search_result
+
+
+def handle_user_query(query, client=None, chat_history=None):
+    messages, search_result = _build_context_and_messages(query, client, chat_history)
+
     response = openai_client.chat.completions.create(
         model=MODEL,
         temperature=1,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_prompt},
-        ],
+        messages=messages,
     )
     logger.info("LLM response generated for query: %s", query)
     return response.choices[0].message.content, search_result
+
+
+def handle_user_query_stream(query, client=None, chat_history=None):
+    """Yield the assistant answer as text chunks as OpenAI generates them.
+
+    Mirrors ``handle_user_query`` but streams tokens. Raises on failure so the
+    caller (API layer) can surface a graceful error event.
+    """
+    messages, _ = _build_context_and_messages(query, client, chat_history)
+
+    stream = openai_client.chat.completions.create(
+        model=MODEL,
+        temperature=1,
+        messages=messages,
+        stream=True,
+    )
+    for chunk in stream:
+        if not chunk.choices:
+            continue
+        delta = chunk.choices[0].delta
+        text = getattr(delta, "content", None)
+        if text:
+            yield text
+    logger.info("LLM streaming response completed for query: %s", query)

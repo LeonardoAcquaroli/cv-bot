@@ -1,0 +1,99 @@
+.bubble-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.bubble-row--user {
+  justify-content: flex-end;
+}
+
+.bubble__avatar {
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-soft);
+  object-fit: cover;
+}
+
+.bubble {
+  max-width: min(80%, 560px);
+  padding: 0.85rem 1.1rem;
+  border-radius: var(--r-md);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  font-size: 0.98rem;
+  line-height: 1.55;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+.bubble--user {
+  border-bottom-right-radius: 6px;
+  background: linear-gradient(135deg, rgba(125, 211, 252, 0.16), rgba(167, 139, 250, 0.16));
+  border-color: rgba(167, 139, 250, 0.28);
+}
+
+.bubble--assistant {
+  border-bottom-left-radius: 6px;
+}
+
+.bubble--error {
+  border-color: rgba(244, 114, 182, 0.5);
+  background: rgba(244, 114, 182, 0.08);
+  color: #fecdd3;
+}
+
+/* Markdown niceties */
+.bubble :first-child {
+  margin-top: 0;
+}
+.bubble :last-child {
+  margin-bottom: 0;
+}
+.bubble p {
+  margin: 0 0 0.6rem;
+}
+.bubble ul,
+.bubble ol {
+  margin: 0 0 0.6rem;
+  padding-left: 1.2rem;
+}
+.bubble li {
+  margin: 0.15rem 0;
+}
+.bubble a {
+  color: var(--c-blue);
+}
+.bubble code {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.1rem 0.35rem;
+  border-radius: 6px;
+  font-size: 0.88em;
+}
+.bubble pre {
+  background: rgba(0, 0, 0, 0.35);
+  padding: 0.8rem;
+  border-radius: var(--r-sm);
+  overflow-x: auto;
+}
+.bubble pre code {
+  background: none;
+  padding: 0;
+}
+
+/* Streaming placeholder caret */
+.bubble__placeholder::after {
+  content: "▍";
+  color: var(--c-purple);
+  animation: caret-blink 1s steps(2) infinite;
+}
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}

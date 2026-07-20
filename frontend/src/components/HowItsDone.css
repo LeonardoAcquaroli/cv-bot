@@ -1,0 +1,85 @@
+.hid {
+  position: fixed;
+  right: clamp(1rem, 4vw, 2.2rem);
+  bottom: clamp(1rem, 4vw, 2.2rem);
+  z-index: 40;
+  display: grid;
+  place-items: center;
+}
+
+/* --- Liquid glass pill --- */
+.hid__pill {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.7rem 1.25rem;
+  border-radius: var(--r-pill);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -6px 14px rgba(167, 139, 250, 0.18);
+  color: var(--text-1);
+  font-weight: 600;
+  font-size: 0.95rem;
+  overflow: hidden;
+}
+
+.hid__pill-label {
+  position: relative;
+  z-index: 2;
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Specular highlight sweep */
+.hid__pill-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    115deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.55) 45%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  transform: translateX(-120%);
+  animation: hid-sweep 4.5s ease-in-out infinite;
+}
+
+@keyframes hid-sweep {
+  0%,
+  55% {
+    transform: translateX(-120%);
+  }
+  75%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+/* --- Explosion particles --- */
+.hid__burst {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.hid__particle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), rgba(167, 139, 250, 0.7));
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.7);
+}

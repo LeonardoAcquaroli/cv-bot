@@ -1,0 +1,45 @@
+:root {
+  /* Brand palette */
+  --c-blue: #7dd3fc;
+  --c-purple: #a78bfa;
+  --c-pink: #f472b6;
+
+  /* Surfaces */
+  --bg-0: #05070f;
+  --bg-1: #0f1424;
+  --bg-2: #12172a;
+  --bg-hero: #1f2a4d;
+
+  /* Text */
+  --text-1: #f2f2f7;
+  --text-2: #a3a9c2;
+  --text-dim: #6b7194;
+
+  /* Glass */
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-bg-strong: rgba(255, 255, 255, 0.07);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-strong: rgba(167, 139, 250, 0.35);
+  --glass-blur: 14px;
+
+  /* Gradients */
+  --grad-brand: linear-gradient(90deg, var(--c-blue), var(--c-purple) 55%, var(--c-pink));
+  --grad-text: linear-gradient(90deg, #7dd3fc, #a78bfa 45%, #f472b6 90%);
+
+  /* Radii */
+  --r-sm: 12px;
+  --r-md: 18px;
+  --r-lg: 24px;
+  --r-pill: 999px;
+
+  /* Shadow */
+  --shadow-soft: 0 4px 18px rgba(0, 0, 0, 0.25);
+  --shadow-glow: 0 6px 24px rgba(167, 139, 250, 0.4);
+
+  /* Layout */
+  --content-max: 760px;
+
+  /* Fonts */
+  --font-display: "Poppins", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
