@@ -22,7 +22,6 @@ RUN uv sync --frozen --no-dev --no-install-project
 
 # Application code.
 COPY backend/ ./backend/
-COPY docs/ ./docs/
 COPY avatar.webp ./avatar.webp
 
 # Compiled frontend from stage 1.
