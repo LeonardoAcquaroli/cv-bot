@@ -12,16 +12,18 @@ from backend.prompts import USER_PROMPT, SYSTEM_PROMPT
 
 load_dotenv()
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 QDRANT_API_URL = os.getenv("QDRANT_API_URL")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
-MODEL = os.getenv("OPENAI_CHAT_MODEL", "gpt-5-nano-2025-08-07")
+# MODEL = os.getenv("OPENAI_CHAT_MODEL", "gpt-5-nano-2025-08-07")
+MODEL = os.getenv("OPENROUTER_FREE_MODEL", "openrouter/free")
 EMBEDDING_MODEL = os.getenv("QDRANT_EMBED_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
 COLLECTION_NAME = os.getenv("QDRANT_COLLECTION", "leo-docs")
 LOG_LEVEL = os.getenv("CVBOT_LOG_LEVEL", "INFO").upper()
 
-if not OPENAI_API_KEY:
-    raise EnvironmentError("OPENAI_API_KEY is not set.")
+if not OPENROUTER_API_KEY:
+    raise EnvironmentError("OPENROUTER_API_KEY is not set.")
 
 if not QDRANT_API_URL:
     raise EnvironmentError("QDRANT_API_URL is not set.")
@@ -45,7 +47,10 @@ if not logger.handlers:
 logger.setLevel(logging_levels.get(LOG_LEVEL, logging.INFO))
 logger.propagate = False
 
-openai_client = OpenAI(api_key=OPENAI_API_KEY)
+openai_client = OpenAI(
+    api_key=OPENROUTER_API_KEY,
+    base_url="https://openrouter.ai/api/v1"
+)
 
 
 def get_qdrant_client() -> QdrantClient:
