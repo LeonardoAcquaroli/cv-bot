@@ -173,11 +173,18 @@ def handle_user_query_stream(query, client=None, chat_history=None):
         messages=messages,
         stream=True,
     )
+
+    used_model = None
     for chunk in stream:
         if not chunk.choices:
             continue
+
+        if used_model is None:
+            used_model = chunk.model  # capture once, first chunk that has it
+
         delta = chunk.choices[0].delta
         text = getattr(delta, "content", None)
         if text:
             yield text
     logger.info("LLM streaming response completed for query: %s", query)
+    logger.info(f"LLM used: {used_model}")
